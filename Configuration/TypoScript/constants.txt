@@ -1,0 +1,20 @@
+plugin.tx_t3less {
+    files {
+        # cat=plugin.tx_t3less/file/1; type=string; label=Less-Files are stored in this folder (don't forget trailing slash)
+        pathToLessFiles = fileadmin/t3_less/lessfiles/
+
+        # cat=plugin.tx_t3less/file/2; type=string; label=CSS-Files should be stored in this path (don't forget trailing slash)
+        outputFolder = fileadmin/t3_less/cssfiles/
+    }
+
+    other {
+        # cat=plugin.tx_t3less//1; type=boolean; label=Include all generated files from outputFolder
+        includeAllFromOutput = 1
+
+        # cat=plugin.tx_t3less//2; type=boolean; label = Activate compiler (it is recommended to deactivate it, if you don't have uncompiled less-styles to save server-power)
+        activateCompiler = 1
+
+        # cat=plugin.tx_t3less//3; type=boolean; label = Delete generated Css-Files with no equal sourcefile (recommended)
+        unlinkCssFilesWithNoSourceFile = 1
+    }
+}

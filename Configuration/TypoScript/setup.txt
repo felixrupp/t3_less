@@ -1,0 +1,27 @@
+plugin.tx_t3less {
+    files {
+        pathToLessFiles = {$plugin.tx_t3less.files.pathToLessFiles}
+        outputFolder = {$plugin.tx_t3less.files.outputFolder}
+    }
+    other {
+        includeAllFromOutput = {$plugin.tx_t3less.other.includeAllFromOutput}
+        activateCompiler = {$plugin.tx_t3less.other.activateCompiler}
+        unlinkCssFilesWithNoSourceFile = {$plugin.tx_t3less.other.unlinkCssFilesWithNoSourceFile}
+    }
+
+    widgets {
+        lessWidget = USER
+        lessWidget {
+            userFunc = tx_extbase_core_bootstrap->run
+            pluginName = Less
+            extensionName = T3Less
+            controller = Less    
+            switchableControllerActions {
+                Less {
+                    1 = less
+                }
+            }
+        }
+    }
+}
+page.1091 < plugin.tx_t3less.widgets.lessWidget
