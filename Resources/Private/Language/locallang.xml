@@ -9,6 +9,8 @@
                         <!-- ErrorMessages -->
                         <label index="noLessFilesInFolder">There are no less-files in given folder: %s .</label>
                         <label index="emptyPathes">Please configure pathes to less- and css-folder using the constants-editor</label>
+                        <label index="noDefinedLessFolder">Please define path to lessfolder using the constants-editor</label>
+                        
                         <!-- ErrorMessages -->
                         <!-- German translations will come with next version -->
 		</languageKey>

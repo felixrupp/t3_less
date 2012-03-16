@@ -8,6 +8,9 @@ plugin.tx_t3less {
         activateCompiler = {$plugin.tx_t3less.other.activateCompiler}
         unlinkCssFilesWithNoSourceFile = {$plugin.tx_t3less.other.unlinkCssFilesWithNoSourceFile}
     }
+    enable {
+        mode = {$plugin.tx_t3less.enable.mode}
+    }
 
     widgets {
         lessWidget = USER
@@ -18,9 +21,10 @@ plugin.tx_t3less {
             controller = Less    
             switchableControllerActions {
                 Less {
-                    1 = less
+                    1 = base
                 }
             }
+            
         }
     }
 }

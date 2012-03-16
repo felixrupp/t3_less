@@ -7,12 +7,12 @@ Tx_Extbase_Utility_Extension::configurePlugin(
 	$_EXTKEY,
 	'Less',
 	array(
-		'Less' => 'list, show, new, create, edit, update, delete',
+		'Less' => 'base,lessphp,lessjs',
 		
 	),
 	// non-cacheable actions
 	array(
-		'Less' => 'create, update, delete',
+		'Less' => '',
 		
 	)
 );
