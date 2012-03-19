@@ -3,7 +3,7 @@
 ########################################################################
 # Extension Manager/Repository config file for ext "t3_less".
 #
-# Auto generated 16-03-2012 18:52
+# Auto generated 17-03-2012 09:28
 #
 # Manual updates:
 # Only the data in the array - everything else is removed by next
@@ -12,16 +12,16 @@
 
 $EM_CONF[$_EXTKEY] = array(
 	'title' => 'LESS for TYPO3',
-	'description' => 'An easy to use extbase extension to compile .less-files with the leafo.net less-php-compiler. It is also possible to include compiled files and delete unused/old compiled files automaticaly.',
+	'description' => 'An easy to use extbase extension for using LESScss in TYPO3. You can choose between leafo.net LESS-PHP-compiler or Javascript-based less.js-compiler. It is also possible to include compiled files and delete unused/old compiled files automaticaly.',
 	'category' => 'plugin',
 	'shy' => 0,
-	'version' => '0.0.2',
-	'dependencies' => '',
+	'version' => '0.1.1',
+	'dependencies' => 'extbase,fluid',
 	'conflicts' => '',
 	'priority' => '',
 	'loadOrder' => '',
 	'module' => '',
-	'state' => 'beta',
+	'state' => 'stable',
 	'uploadfolder' => 0,
 	'createDirs' => 'fileadmin/t3_less/cssfiles, fileadmin/t3_less/lessfiles',
 	'modify_tables' => '',
@@ -34,13 +34,17 @@ $EM_CONF[$_EXTKEY] = array(
 	'CGLcompliance_note' => '',
 	'constraints' => array(
 		'depends' => array(
+			'extbase' => '1.3.0',
+			'fluid' => '1.3.0',
 		),
 		'conflicts' => array(
 		),
 		'suggests' => array(
 		),
 	),
-	'_md5_values_when_last_written' => 'a:14:{s:12:"ext_icon.gif";s:4:"e922";s:17:"ext_localconf.php";s:4:"08ef";s:14:"ext_tables.php";s:4:"355d";s:37:"Classes/Controller/LessController.php";s:4:"ea03";s:38:"Configuration/TypoScript/constants.txt";s:4:"38c7";s:34:"Configuration/TypoScript/setup.txt";s:4:"f7e4";s:14:"doc/manual.sxw";s:4:"c93c";s:40:"Resources/Private/Language/locallang.xml";s:4:"2349";s:38:"Resources/Private/Layouts/Default.html";s:4:"7cb6";s:35:"Resources/Private/Lib/lessc.inc.php";s:4:"e18e";s:42:"Resources/Private/Partials/FormErrors.html";s:4:"d41d";s:47:"Resources/Private/Partials/Less/FormFields.html";s:4:"d41d";s:47:"Resources/Private/Partials/Less/Properties.html";s:4:"d41d";s:42:"Resources/Private/Templates/Less/Less.html";s:4:"25ff";}',
+	'_md5_values_when_last_written' => 'a:11:{s:12:"ext_icon.gif";s:4:"e922";s:17:"ext_localconf.php";s:4:"bc9c";s:14:"ext_tables.php";s:4:"355d";s:37:"Classes/Controller/LessController.php";s:4:"b9d6";s:38:"Configuration/TypoScript/constants.txt";s:4:"547e";s:34:"Configuration/TypoScript/setup.txt";s:4:"1134";s:40:"Resources/Private/Language/locallang.xml";s:4:"b9a5";s:35:"Resources/Private/Lib/lessc.inc.php";s:4:"e18e";s:42:"Resources/Private/Templates/Less/Base.html";s:4:"d41d";s:37:"Resources/Public/Js/less-1.3.0.min.js";s:4:"3666";s:14:"doc/manual.sxw";s:4:"145a";}',
+	'suggests' => array(
+	),
 );
 
 ?>
