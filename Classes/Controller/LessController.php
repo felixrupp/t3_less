@@ -71,7 +71,6 @@ class Tx_T3Less_Controller_LessController extends Tx_Extbase_MVC_Controller_Acti
                 $this->lessJs();
                 break;
         }
-        
     }
 
     /**
@@ -115,8 +114,21 @@ class Tx_T3Less_Controller_LessController extends Tx_Extbase_MVC_Controller_Acti
         //adds generated css-files from output folder to pageRenderer if activated
         if ($this->configuration['other']['includeAllFromOutput'] == 1) {
             foreach (t3lib_div::getFilesInDir($this->outputfolder, "css") as $cssFile) {
-                $GLOBALS['TSFE']->getPageRenderer()->addCssFile($this->outputfolder . $cssFile, $rel = 'stylesheet', $media = 'all', $title = '', $compress = TRUE);
-            }
+                // array with filesettings from TS
+                $tsOptions = $this->configuration['phpcompiler']['filesettings'][substr($cssFile, 0, -37)];
+                                
+                $GLOBALS['TSFE']->getPageRenderer()->addCssFile(
+                        $this->outputfolder . $cssFile, 
+                        $rel = 'stylesheet', 
+                        $media = $tsOptions['media'] ? $tsOptions['media'] : 'all',
+                        $title = $tsOptions['title'] ? $tsOptions['title'] : '',
+                        $compress = $tsOptions['compress'] >= '0' ? (boolean)$tsOptions['compress'] : TRUE, 
+                        $forceOnTop = $tsOptions['forceOnTop'] >= '0' ? (boolean)$tsOptions['forceOnTop'] : FALSE, 
+                        $allWrap = $tsOptions['allWrap'] ? $tsOptions['allWrap'] : '',
+                        $excludeFromConcatenation = $tsOptions['excludeFromConcatenation'] >= '0' ? (boolean)$tsOptions['excludeFromConcatenation'] : FALSE
+                );
+            }   
+            
         }
     }
 
@@ -148,12 +160,26 @@ class Tx_T3Less_Controller_LessController extends Tx_Extbase_MVC_Controller_Acti
      * includes all less-files from defined lessfolder to head and less.js to the footer
      */
     public function lessJs() {
-            // lessfolder defined
+        // lessfolder defined
         if ($this->lessfolder) {
-                // files in defined lessfolder?
+            // files in defined lessfolder?
             if (t3lib_div::getFilesInDir($this->lessfolder, "less")) {
                 foreach (t3lib_div::getFilesInDir($this->lessfolder, "less") as $lessFile) {
-                    $GLOBALS['TSFE']->getPageRenderer()->addCssFile($this->lessfolder . $lessFile, $rel = 'stylesheet/less');
+                    // array with filesettings from TS
+                    $tsOptions = $this->configuration['jscompiler']['filesettings'][substr($lessFile, 0, -5)];
+                    
+                    $GLOBALS['TSFE']->getPageRenderer()->addCssFile(
+                            $this->lessfolder . $lessFile, 
+                            $rel = 'stylesheet/less', 
+                            $media = $tsOptions['media'] ? $tsOptions['media'] : 'all',
+                            $title = $tsOptions['title'] ? $tsOptions['title'] : '',
+                            $compress = FALSE,
+                            $forceOnTop = TRUE,
+                            $allWrap = $tsOptions['allWrap'] ? $tsOptions['allWrap'] : '',
+                            $excludeFromConcatenation = TRUE
+                        );
+                    
+                    
                 }
                 //include less.js to footer            
                 $GLOBALS['TSFE']->getPageRenderer()->addJsFooterFile($file = t3lib_extMgm::siteRelPath('t3_less') . 'Resources/Public/Js/less-1.3.0.min.js', $type = 'text/javascript', $compress = TRUE, $forceOnTop = FALSE);

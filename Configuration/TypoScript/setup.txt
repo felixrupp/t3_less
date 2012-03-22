@@ -29,3 +29,66 @@ plugin.tx_t3less {
     }
 }
 page.1091 < plugin.tx_t3less.widgets.lessWidget
+
+
+
+
+#### EXAMPLE for individual file settings ####
+#### configure this in your template ####
+/*
+plugin.tx_t3less {
+    ##Settings only for phpcompiler
+    phpcompiler {
+        filesettings {
+            ## "style" = Filename of your lessfile without ".less"-extension (source file is style.less)
+            style {
+                media = only screen and (max-device-width: 480px)
+                title = beispiel
+                compress = 1
+                forceOnTop = 1
+                allWrap = ''
+                excludeFromConcatenation = 0
+            }
+            ## "iehacks" = Filename of your lessfile without ".less"-extension (source file is iehacks.less)
+            iehacks {
+                allWrap = <!--[if IE]> | <![endif]-->
+            }
+        }
+    }
+    jscompiler {
+        filesettings {
+            style {
+                media = screen
+                title = lessdatei
+                allWrap = ''
+            }
+            iehacks {
+                media = all
+                title = iehacks
+                allWrap = <!--[if IE]> | <![endif]-->
+            }
+        }
+    }
+}
+*/
+
+### If you don't configure this values, default settings from getPageRenderer()->addCssFile(...) will be used ###
+### Following settings are the default settings for using phpcompiler: ###
+# media = 'all'
+# title = ''
+# compress = TRUE
+# forceOnTop = FALSE
+# allWrap = ''
+# excludeFromConcatenation = FALSE
+###
+### JS-Compiler has only three settings to configure, all other makes no sense by using less.js
+### the other settings are by default: compress & excludeFromConcatenation = FALSE, forceOnTop = TRUE
+### For media queries you should use something like this in your less-file, 
+### but you can also use plugin.tx_t3less.jscompiler.filesettings.LESS-FILENAME_WITHOUT_EXTENSION.media
+/*
+@media screen and (max-width: 480px) {
+    #header {        
+        display:none;
+    }
+}
+*/
