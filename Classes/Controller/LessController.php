@@ -111,23 +111,24 @@ class Tx_T3Less_Controller_LessController extends Tx_Extbase_MVC_Controller_Acti
 
 
 
-        //adds generated css-files from output folder to pageRenderer if activated
-        if ($this->configuration['other']['includeAllFromOutput'] == 1) {
+        
             foreach (t3lib_div::getFilesInDir($this->outputfolder, "css") as $cssFile) {
-                // array with filesettings from TS
-                $tsOptions = $this->configuration['phpcompiler']['filesettings'][substr($cssFile, 0, -37)];
-                                
-                $GLOBALS['TSFE']->getPageRenderer()->addCssFile(
-                        $this->outputfolder . $cssFile, 
-                        $rel = 'stylesheet', 
-                        $media = $tsOptions['media'] ? $tsOptions['media'] : 'all',
-                        $title = $tsOptions['title'] ? $tsOptions['title'] : '',
-                        $compress = $tsOptions['compress'] >= '0' ? (boolean)$tsOptions['compress'] : TRUE, 
-                        $forceOnTop = $tsOptions['forceOnTop'] >= '0' ? (boolean)$tsOptions['forceOnTop'] : FALSE, 
-                        $allWrap = $tsOptions['allWrap'] ? $tsOptions['allWrap'] : '',
-                        $excludeFromConcatenation = $tsOptions['excludeFromConcatenation'] >= '0' ? (boolean)$tsOptions['excludeFromConcatenation'] : FALSE
-                );
-            }   
+                $excludeFromPageRender = $this->configuration['phpcompiler']['filesettings'][substr($cssFile, 0, -37)]['excludeFromPageRenderer'];
+                if(!$excludeFromPageRender || $excludeFromPageRender == 0) {
+                    // array with filesettings from TS
+                    $tsOptions = $this->configuration['phpcompiler']['filesettings'][substr($cssFile, 0, -37)];
+
+                    $GLOBALS['TSFE']->getPageRenderer()->addCssFile(
+                            $this->outputfolder . $cssFile, 
+                            $rel = 'stylesheet', 
+                            $media = $tsOptions['media'] ? $tsOptions['media'] : 'all',
+                            $title = $tsOptions['title'] ? $tsOptions['title'] : '',
+                            $compress = $tsOptions['compress'] >= '0' ? (boolean)$tsOptions['compress'] : TRUE, 
+                            $forceOnTop = $tsOptions['forceOnTop'] >= '0' ? (boolean)$tsOptions['forceOnTop'] : FALSE, 
+                            $allWrap = $tsOptions['allWrap'] ? $tsOptions['allWrap'] : '',
+                            $excludeFromConcatenation = $tsOptions['excludeFromConcatenation'] >= '0' ? (boolean)$tsOptions['excludeFromConcatenation'] : FALSE
+                    );
+                }
             
         }
     }
@@ -165,6 +166,8 @@ class Tx_T3Less_Controller_LessController extends Tx_Extbase_MVC_Controller_Acti
             // files in defined lessfolder?
             if (t3lib_div::getFilesInDir($this->lessfolder, "less")) {
                 foreach (t3lib_div::getFilesInDir($this->lessfolder, "less") as $lessFile) {
+                    $excludeFromPageRender = $this->configuration['jscompiler']['filesettings'][substr($lessFile, 0, -5)]['excludeFromPageRenderer'];
+                    if(!$excludeFromPageRender || $excludeFromPageRender == 0) {
                     // array with filesettings from TS
                     $tsOptions = $this->configuration['jscompiler']['filesettings'][substr($lessFile, 0, -5)];
                     
@@ -178,7 +181,7 @@ class Tx_T3Less_Controller_LessController extends Tx_Extbase_MVC_Controller_Acti
                             $allWrap = $tsOptions['allWrap'] ? $tsOptions['allWrap'] : '',
                             $excludeFromConcatenation = TRUE
                         );
-                    
+                    }
                     
                 }
                 //include less.js to footer            
