@@ -4,7 +4,7 @@ plugin.tx_t3less {
         outputFolder = {$plugin.tx_t3less.files.outputFolder}
     }
     other {
-        includeAllFromOutput = {$plugin.tx_t3less.other.includeAllFromOutput}
+        
         activateCompiler = {$plugin.tx_t3less.other.activateCompiler}
         unlinkCssFilesWithNoSourceFile = {$plugin.tx_t3less.other.unlinkCssFilesWithNoSourceFile}
     }

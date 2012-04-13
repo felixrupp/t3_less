@@ -11,9 +11,6 @@ plugin.tx_t3less {
         # cat=plugin.tx_t3less//1; type=boolean; label =PHP-COMPILER -- Activate compiler (it is recommended to deactivate it, if you don't have uncompiled less-styles to save server-power)
         activateCompiler = 1
         
-        # cat=plugin.tx_t3less//2; type=boolean; label=PHP-COMPILER -- Include all generated files from outputFolder, if deactivated, files are only getting compiled
-        includeAllFromOutput = 1
-
         # cat=plugin.tx_t3less//3; type=boolean; label =PHP-COMPILER -- Delete generated Css-Files with no equal sourcefile (recommended)
         unlinkCssFilesWithNoSourceFile = 1
     }
