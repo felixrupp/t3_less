@@ -12,23 +12,9 @@ plugin.tx_t3less {
         mode = {$plugin.tx_t3less.enable.mode}
     }
 
-    widgets {
-        lessWidget = USER
-        lessWidget {
-            userFunc = tx_extbase_core_bootstrap->run
-            pluginName = Less
-            extensionName = T3Less
-            controller = Less    
-            switchableControllerActions {
-                Less {
-                    1 = base
-                }
-            }
-            
-        }
-    }
+    
 }
-page.1091 < plugin.tx_t3less.widgets.lessWidget
+
 
 
 
@@ -48,6 +34,7 @@ plugin.tx_t3less {
                 forceOnTop = 1
                 allWrap = ''
                 excludeFromConcatenation = 0
+                excludeFromPageRenderer = 1 #this file will not be included via pagerenderer
             }
             ## "iehacks" = Filename of your lessfile without ".less"-extension (source file is iehacks.less)
             iehacks {

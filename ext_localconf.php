@@ -3,18 +3,6 @@ if (!defined('TYPO3_MODE')) {
 	die ('Access denied.');
 }
 
-Tx_Extbase_Utility_Extension::configurePlugin(
-	$_EXTKEY,
-	'Less',
-	array(
-		'Less' => 'base,lessphp,lessjs',
-		
-	),
-	// non-cacheable actions
-	array(
-		'Less' => '',
-		
-	)
-);
 
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-preProcess'][] = 'EXT:t3_less/Classes/Controller/LessController.php:Tx_T3Less_Controller_LessController->baseAction';
 ?>

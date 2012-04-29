@@ -51,14 +51,38 @@ class Tx_T3Less_Controller_LessController extends Tx_Extbase_MVC_Controller_Acti
      * @var string $outputfolder
      */
     protected $outputfolder;
+    
+    
+    
+        
+    public function __construct() {
+        $objectManager = t3lib_div::makeInstance('Tx_Extbase_Object_ObjectManager');
+        $configurationManager = $objectManager->get('Tx_Extbase_Configuration_ConfigurationManagerInterface');
+       
+        $configuration = $configurationManager->getConfiguration(
+            Tx_Extbase_Configuration_ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK,
+                'T3Less',
+                ''
+                
+        );
+        
+        $this->configuration = $configuration;
+        
+        parent::__construct();
+    }
+    
+    
+    
 
     /**
      * action base
      * 
      */
     public function baseAction() {
-        //get extension configuration
-        $this->configuration = $this->configurationManager->getConfiguration(Tx_Extbase_Configuration_ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
+         if(TYPO3_MODE != 'FE') {
+             return;
+         }
+        
         $this->lessfolder = $this->configuration['files']['pathToLessFiles'];
         $this->outputfolder = $this->configuration['files']['outputFolder'];
 
