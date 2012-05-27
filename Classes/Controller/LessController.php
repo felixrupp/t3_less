@@ -65,55 +65,39 @@ class Tx_T3Less_Controller_LessController extends Tx_Extbase_MVC_Controller_Acti
                 ''
                 
         );
-        
         $this->configuration = $configuration;
-        
         parent::__construct();
     }
-    
-    
-    
 
     /**
      * action base
      * 
      */
     public function baseAction() {
-         if(TYPO3_MODE != 'FE') {
-             return;
-         }
-        
+        if (TYPO3_MODE != 'FE') {
+            return;
+        }
         $this->lessfolder = $this->configuration['files']['pathToLessFiles'];
         $this->outputfolder = $this->configuration['files']['outputFolder'];
-
-        switch ($this->configuration['enable']['mode']) {
-            case 'PHP-Compiler':
-                $this->lessPhp();
-                break;
-
-            case 'JS-Compiler':
-                $this->lessJs();
-                break;
-        }
+        $this->getLessFiles();
     }
-
-    /**
-     * lessPhp
+    
+    
+    /*
+     * getLessFiles
+     * generates file array from defined lessfolder and hooks
      * 
-     * @return void 
      */
-    public function lessPhp() {
-
+    public function getLessFiles() {
         // files array holds less files
         $files = array();
-
         // compiler activated?
         if ($this->configuration['other']['activateCompiler']) {
             // folders defined?
             if ($this->lessfolder && $this->outputfolder) {
                 // are there files in the defined less folder?
-                if (t3lib_div::getFilesInDir($this->lessfolder, "less")) {
-                    $files = t3lib_div::getFilesInDir($this->lessfolder, "less");
+                if (t3lib_div::getFilesInDir($this->lessfolder, "less", TRUE)) {
+                    $files = t3lib_div::getFilesInDir($this->lessfolder, "less", TRUE);
                 } else {
                     echo $this->wrapErrorMessage(Tx_Extbase_Utility_Localization::translate('noLessFilesInFolder', $this->extensionName, $arguments = array('s' => $this->lessfolder)));
                 }
@@ -121,22 +105,55 @@ class Tx_T3Less_Controller_LessController extends Tx_Extbase_MVC_Controller_Acti
                 echo $this->wrapErrorMessage(Tx_Extbase_Utility_Localization::translate('emptyPathes', $this->extensionName));
             }
         }
+
+
+        /* Hook to pass less-files from other extension, see manual */
+        if ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['t3less']['addForeignLessFiles']) {
+            foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['t3less']['addForeignLessFiles'] as $a) {
+                $files[] = t3lib_div::getFilesInDir($a, "less", TRUE);
+            }
+            $files = $this->flatArray(null, $files);
+        }
+
+        switch ($this->configuration['enable']['mode']) {
+            case 'PHP-Compiler':
+                $this->lessPhp($files);
+                break;
+
+            case 'JS-Compiler':
+                $this->lessJs($files);
+                break;
+        }
+    }
+    
+
+    /**
+     * lessPhp
+     * 
+     * @return void 
+     */
+    public function lessPhp($files) {
+
+        // create outputfolder if it does not exist
+        if (!is_dir($this->outputfolder)) t3lib_div::mkdir_deep ($this->outputfolder);
+        
         // compile each less-file
         foreach ($files as $file) {
-            if (!file_exists($this->outputfolder . substr($file, 0, -5) . '_' . md5_file(($this->lessfolder . $file)) . '.css')) {
-                lessc::ccompile($this->lessfolder . $file, $this->outputfolder . substr($file, 0, -5) . '_' . md5_file(($this->lessfolder . $file)) . '.css');
+            //get only the name of less file
+            $filename = array_pop(explode('/', $file));
+            $outputfile = $this->outputfolder . substr($filename, 0, -5) . '_' . md5_file(($file)) . '.css';
+            if (!file_exists($outputfile)) {
+                lessc::ccompile($file, $this->outputfolder . substr($filename, 0, -5) . '_' . md5_file(($file)) . '.css');
+                t3lib_div::fixPermissions($outputfile, FALSE);
             }
+            
         }
-
         // unlink compiled files which have no equal source less-file
         if ($this->configuration['other']['unlinkCssFilesWithNoSourceFile'] == 1) {
-            $this->unlinkGeneratedFilesWithNoSourceFile();
+            $this->unlinkGeneratedFilesWithNoSourceFile($files);
         }
 
-
-
-        
-            foreach (t3lib_div::getFilesInDir($this->outputfolder, "css") as $cssFile) {
+        foreach (t3lib_div::getFilesInDir($this->outputfolder, "css") as $cssFile) {
                 $excludeFromPageRender = $this->configuration['phpcompiler']['filesettings'][substr($cssFile, 0, -37)]['excludeFromPageRenderer'];
                 if(!$excludeFromPageRender || $excludeFromPageRender == 0) {
                     // array with filesettings from TS
@@ -156,47 +173,27 @@ class Tx_T3Less_Controller_LessController extends Tx_Extbase_MVC_Controller_Acti
             
         }
     }
-
-    /**
-     * unlink compiled files which have no equal source less-file
-     * Only for mode "PHP-Compiler"
-     */
-    public function unlinkGeneratedFilesWithNoSourceFile() {
-        // all available sourcefiles 
-        $sourceFiles = t3lib_div::getFilesInDir($this->lessfolder, "less");
-
-        // build array with md5 values from sourcefiles
-        foreach ($sourceFiles as $file) {
-            $srcArr[] .= md5_file($this->lessfolder . $file);
-        }
-
-        // unlink every css file, which have no equal less-file
-        // checked by comparing md5-string from filename with md5_file(sourcefile)
-        foreach (t3lib_div::getFilesInDir($this->outputfolder, "css") as $cssFile) {
-            $md5 = substr(substr($cssFile, 0, -4), -32);
-            if (!in_array($md5, $srcArr)) {
-                unlink($this->outputfolder . $cssFile);
-            }
-        }
-    }
-
-    /**
+    
+     /**
      * lessJs
      * includes all less-files from defined lessfolder to head and less.js to the footer
      */
-    public function lessJs() {
+    public function lessJs($files) {
         // lessfolder defined
-        if ($this->lessfolder) {
+        
             // files in defined lessfolder?
-            if (t3lib_div::getFilesInDir($this->lessfolder, "less")) {
-                foreach (t3lib_div::getFilesInDir($this->lessfolder, "less") as $lessFile) {
-                    $excludeFromPageRender = $this->configuration['jscompiler']['filesettings'][substr($lessFile, 0, -5)]['excludeFromPageRenderer'];
+            if ($files) {
+                foreach ($files as $lessFile) {
+                    $filename = array_pop(explode('/', $lessFile));
+                    
+                    $excludeFromPageRender = $this->configuration['jscompiler']['filesettings'][substr($filename, 0, -5)]['excludeFromPageRenderer'];
+                    
                     if(!$excludeFromPageRender || $excludeFromPageRender == 0) {
                     // array with filesettings from TS
-                    $tsOptions = $this->configuration['jscompiler']['filesettings'][substr($lessFile, 0, -5)];
+                    $tsOptions = $this->configuration['jscompiler']['filesettings'][substr($filename, 0, -5)];
                     
                     $GLOBALS['TSFE']->getPageRenderer()->addCssFile(
-                            $this->lessfolder . $lessFile, 
+                            $lessFile, 
                             $rel = 'stylesheet/less', 
                             $media = $tsOptions['media'] ? $tsOptions['media'] : 'all',
                             $title = $tsOptions['title'] ? $tsOptions['title'] : '',
@@ -213,10 +210,34 @@ class Tx_T3Less_Controller_LessController extends Tx_Extbase_MVC_Controller_Acti
             } else {
                 echo $this->wrapErrorMessage(Tx_Extbase_Utility_Localization::translate('noLessFilesInFolder', $this->extensionName, $arguments = array('s' => $this->lessfolder)));
             }
-        } else {
-            echo $this->wrapErrorMessage(Tx_Extbase_Utility_Localization::translate('noDefinedLessFolder', $this->extensionName, $arguments = array('s' => $this->lessfolder)));
+        
+    }
+   
+    
+    /**
+     * unlink compiled files which have no equal source less-file
+     * Only for mode "PHP-Compiler"
+     */
+    public function unlinkGeneratedFilesWithNoSourceFile($sourceFiles) {
+        // all available sourcefiles 
+        //$sourceFiles = t3lib_div::getFilesInDir($this->lessfolder, "less");
+
+        // build array with md5 values from sourcefiles
+        foreach ($sourceFiles as $file) {
+            $srcArr[] .= md5_file($file);
+        }
+
+        // unlink every css file, which have no equal less-file
+        // checked by comparing md5-string from filename with md5_file(sourcefile)
+        foreach (t3lib_div::getFilesInDir($this->outputfolder, "css") as $cssFile) {
+            $md5 = substr(substr($cssFile, 0, -4), -32);
+            if (!in_array($md5, $srcArr)) {
+                unlink($this->outputfolder . $cssFile);
+            }
         }
     }
+
+   
 
     /**
      * wraps error messages in a div
@@ -232,6 +253,26 @@ class Tx_T3Less_Controller_LessController extends Tx_Extbase_MVC_Controller_Acti
         return $errMsg;
     }
 
+
+    /* 
+     * flatArray
+     * little helper function to flatten multi arrays to flat arrays
+     * @return array $elements
+     */
+    protected function flatArray($needle = null, $haystack = array()) {
+
+        $iterator = new RecursiveIteratorIterator(new RecursiveArrayIterator($haystack));
+        $elements = array();
+
+        foreach ($iterator as $element) {
+
+            if (is_null($needle) || $iterator->key() == $needle) {
+                $elements[] = $element;
+            }
+        }
+
+        return $elements;
+    }
 }
 
 ?>
