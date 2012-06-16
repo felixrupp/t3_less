@@ -16,9 +16,6 @@ plugin.tx_t3less {
 }
 
 
-
-
-
 #### EXAMPLE for individual file settings ####
 #### configure this in your template ####
 /*
@@ -34,6 +31,12 @@ plugin.tx_t3less {
                 forceOnTop = 1
                 allWrap = ''
                 excludeFromConcatenation = 0
+                sortOrder = 10
+            }
+            style2 {
+                sortOrder = 20
+            }
+            style3  {
                 excludeFromPageRenderer = 1 #this file will not be included via pagerenderer
             }
             ## "iehacks" = Filename of your lessfile without ".less"-extension (source file is iehacks.less)
@@ -48,11 +51,13 @@ plugin.tx_t3less {
                 media = screen
                 title = lessdatei
                 allWrap = ''
+                sortOrder = 10
             }
             iehacks {
                 media = all
                 title = iehacks
                 allWrap = <!--[if IE]> | <![endif]-->
+                sortOrder = 500
             }
         }
     }

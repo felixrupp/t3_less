@@ -114,7 +114,7 @@ class Tx_T3Less_Controller_LessController extends Tx_Extbase_MVC_Controller_Acti
             }
             $files = $this->flatArray(null, $files);
         }
-
+                
         switch ($this->configuration['enable']['mode']) {
             case 'PHP-Compiler':
                 $this->lessPhp($files);
@@ -152,8 +152,11 @@ class Tx_T3Less_Controller_LessController extends Tx_Extbase_MVC_Controller_Acti
         if ($this->configuration['other']['unlinkCssFilesWithNoSourceFile'] == 1) {
             $this->unlinkGeneratedFilesWithNoSourceFile($files);
         }
-
-        foreach (t3lib_div::getFilesInDir($this->outputfolder, "css") as $cssFile) {
+        $files = t3lib_div::getFilesInDir($this->outputfolder, "css");
+        //respect given sort order defined in TS 
+        usort($files,array($this, 'getSortOrderPhp'));
+        
+	foreach ($files as $cssFile) {
                 $excludeFromPageRender = $this->configuration['phpcompiler']['filesettings'][substr($cssFile, 0, -37)]['excludeFromPageRenderer'];
                 if(!$excludeFromPageRender || $excludeFromPageRender == 0) {
                     // array with filesettings from TS
@@ -179,13 +182,13 @@ class Tx_T3Less_Controller_LessController extends Tx_Extbase_MVC_Controller_Acti
      * includes all less-files from defined lessfolder to head and less.js to the footer
      */
     public function lessJs($files) {
-        // lessfolder defined
-        
-            // files in defined lessfolder?
-            if ($files) {
+            //respect given sort order defined in TS 
+            usort($files,array($this, 'getSortOrderJs'));
+            //files in defined lessfolder?
+            if ($files) {    
                 foreach ($files as $lessFile) {
                     $filename = array_pop(explode('/', $lessFile));
-                    
+       
                     $excludeFromPageRender = $this->configuration['jscompiler']['filesettings'][substr($filename, 0, -5)]['excludeFromPageRenderer'];
                     
                     if(!$excludeFromPageRender || $excludeFromPageRender == 0) {
@@ -198,7 +201,7 @@ class Tx_T3Less_Controller_LessController extends Tx_Extbase_MVC_Controller_Acti
                             $media = $tsOptions['media'] ? $tsOptions['media'] : 'all',
                             $title = $tsOptions['title'] ? $tsOptions['title'] : '',
                             $compress = FALSE,
-                            $forceOnTop = TRUE,
+                            $forceOnTop = FALSE,
                             $allWrap = $tsOptions['allWrap'] ? $tsOptions['allWrap'] : '',
                             $excludeFromConcatenation = TRUE
                         );
@@ -212,7 +215,6 @@ class Tx_T3Less_Controller_LessController extends Tx_Extbase_MVC_Controller_Acti
             }
         
     }
-   
     
     /**
      * unlink compiled files which have no equal source less-file
@@ -273,6 +275,47 @@ class Tx_T3Less_Controller_LessController extends Tx_Extbase_MVC_Controller_Acti
 
         return $elements;
     }
+    
+    /**
+     * getSortOrderPhp
+     * little helper function to respect given sort order defined in TS by using phpcompiler
+     * @param type $file1
+     * @param type $file2
+     * @return int 
+     */
+    function getSortOrderPhp($file1, $file2) {
+        $fileSettings = $this->configuration['phpcompiler']['filesettings'];
+        $tsOptions1 = $fileSettings[substr($file1, 0, -37)];
+        $tsOptions2 = $fileSettings[substr($file2, 0, -37)];
+        $sortOrder1 = $tsOptions1['sortOrder'] ? $tsOptions1['sortOrder'] : 0;
+        $sortOrder2 = $tsOptions2['sortOrder'] ? $tsOptions2['sortOrder'] : 0;
+
+        if ($sortOrder1 == $sortOrder2) {
+            return 0;
+        }
+        return ($sortOrder1 < $sortOrder2) ? -1 : 1;
+    }
+    
+    /**
+     * getSortOrderJs
+     * little helper function to respect given sort order defined in TS by using jscompiler
+     * @param type $file1
+     * @param type $file2
+     * @return int 
+     */
+    function getSortOrderJs($file1, $file2) {
+        $fileSettings = $this->configuration['jscompiler']['filesettings'];
+        $tsOptions1 = $fileSettings[substr(array_pop(explode('/', $file1)), 0, -5)];
+        $tsOptions2 = $fileSettings[substr(array_pop(explode('/', $file2)), 0, -5)];
+        $sortOrder1 = $tsOptions1['sortOrder'] ? $tsOptions1['sortOrder'] : 0;
+        $sortOrder2 = $tsOptions2['sortOrder'] ? $tsOptions2['sortOrder'] : 0;
+
+        if ($sortOrder1 == $sortOrder2) {
+            return 0;
+        }
+        return ($sortOrder1 < $sortOrder2) ? -1 : 1;
+    }
+    
 }
 
 ?>
