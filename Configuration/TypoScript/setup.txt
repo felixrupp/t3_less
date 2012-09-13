@@ -7,6 +7,8 @@ plugin.tx_t3less {
         
         activateCompiler = {$plugin.tx_t3less.other.activateCompiler}
         unlinkCssFilesWithNoSourceFile = {$plugin.tx_t3less.other.unlinkCssFilesWithNoSourceFile}
+        compressed = {$plugin.tx_t3less.other.compressed}
+        forceMode = {$plugin.tx_t3less.other.forceMode}
     }
     enable {
         mode = {$plugin.tx_t3less.enable.mode}

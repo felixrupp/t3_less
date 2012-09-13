@@ -135,15 +135,24 @@ class Tx_T3Less_Controller_LessController extends Tx_Extbase_MVC_Controller_Acti
     public function lessPhp($files) {
 
         // create outputfolder if it does not exist
-        if (!is_dir($this->outputfolder)) t3lib_div::mkdir_deep ($this->outputfolder);
+        if (!is_dir($this->outputfolder)) t3lib_div::mkdir_deep ('', $this->outputfolder);
         
         // compile each less-file
         foreach ($files as $file) {
             //get only the name of less file
             $filename = array_pop(explode('/', $file));
             $outputfile = $this->outputfolder . substr($filename, 0, -5) . '_' . md5_file(($file)) . '.css';
+            if($this->configuration['other']['forceMode']) 
+                unlink($outputfile);
+            
             if (!file_exists($outputfile)) {
-                lessc::ccompile($file, $this->outputfolder . substr($filename, 0, -5) . '_' . md5_file(($file)) . '.css');
+                if($this->configuration['other']['compressed']){
+                    $less = new lessc;
+                    $less->setFormatter("compressed");
+                    lessc::ccompile($file, $this->outputfolder . substr($filename, 0, -5) . '_' . md5_file(($file)) . '.css',$less);
+                } else { 
+                    lessc::ccompile($file, $this->outputfolder . substr($filename, 0, -5) . '_' . md5_file(($file)) . '.css');
+                }
                 t3lib_div::fixPermissions($outputfile, FALSE);
             }
             

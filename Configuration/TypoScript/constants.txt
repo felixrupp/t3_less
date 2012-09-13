@@ -13,6 +13,12 @@ plugin.tx_t3less {
         
         # cat=plugin.tx_t3less//3; type=boolean; label =PHP-COMPILER -- Delete generated Css-Files with no equal sourcefile (recommended)
         unlinkCssFilesWithNoSourceFile = 1
+
+        # cat=plugin.tx_t3less//4; type=boolean; label =COMPRESS FILE -- CSS file will be compressed if you check this (recommended)
+        compressed = 1
+        
+        # cat=plugin.tx_t3less//5; type=boolean; label =FORCE MODE -- ALWAYS generate new file (not recommended for production) 
+        forceMode = 0 
     }
 
 
