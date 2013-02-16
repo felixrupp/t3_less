@@ -9,6 +9,7 @@ plugin.tx_t3less {
         unlinkCssFilesWithNoSourceFile = {$plugin.tx_t3less.other.unlinkCssFilesWithNoSourceFile}
         compressed = {$plugin.tx_t3less.other.compressed}
         forceMode = {$plugin.tx_t3less.other.forceMode}
+        lessJsScriptPath = {$plugin.tx_t3less.other.lessJsScriptPath}
     }
     enable {
         mode = {$plugin.tx_t3less.enable.mode}
@@ -45,6 +46,10 @@ plugin.tx_t3less {
             iehacks {
                 allWrap = <!--[if IE]> | <![endif]-->
             }
+        }
+        registerFunctions {
+            #Example user function
+            double = EXT:t3_less/Classes/UserFunction/class.user_exampleClass.php:user_exampleClass->exampleFunction
         }
     }
     jscompiler {

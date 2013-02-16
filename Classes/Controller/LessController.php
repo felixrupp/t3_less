@@ -3,7 +3,7 @@
 /* * *************************************************************
  *  Copyright notice
  *
- *  (c) 2012 
+ *  (c) 2013 
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -28,7 +28,7 @@
  *
  * @package t3_less
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- *
+ * @author  David Greiner <hallo@davidgreiner.de>
  */
 require_once (t3lib_extMgm::extPath('t3_less') . 'Resources/Private/Lib/lessc.inc.php');
 
@@ -137,17 +137,34 @@ class Tx_T3Less_Controller_LessController extends Tx_Extbase_MVC_Controller_Acti
         // create outputfolder if it does not exist
         if (!is_dir($this->outputfolder)) t3lib_div::mkdir_deep ('', $this->outputfolder);
         
+        // register custom functions, #36273
+        $less = new lessc();
+        if(is_array($this->configuration['phpcompiler']['registerFunctions'])) {
+                foreach($this->configuration['phpcompiler']['registerFunctions'] as $key=>$funcRef) {
+                        $parts = explode('->', $funcRef);
+
+                        if(count($parts) == 2) {
+                                $hookObject = t3lib_div::getUserObj($parts[0]);
+                                if(is_object($hookObject) && method_exists($hookObject, $parts[1])) {
+                                    
+                                    $less->registerFunction($key, array($hookObject, $parts[1]));
+                                }
+                        }
+                }
+        }
+
         // compile each less-file
         foreach ($files as $file) {
             //get only the name of less file
             $filename = array_pop(explode('/', $file));
             $outputfile = $this->outputfolder . substr($filename, 0, -5) . '_' . md5_file(($file)) . '.css';
-            if($this->configuration['other']['forceMode']) 
+            
+            if($this->configuration['other']['forceMode']) {
                 unlink($outputfile);
+            }
             
             if (!file_exists($outputfile)) {
                 if($this->configuration['other']['compressed']){
-                    $less = new lessc;
                     $less->setFormatter("compressed");
                     lessc::ccompile($file, $this->outputfolder . substr($filename, 0, -5) . '_' . md5_file(($file)) . '.css',$less);
                 } else { 
@@ -218,7 +235,7 @@ class Tx_T3Less_Controller_LessController extends Tx_Extbase_MVC_Controller_Acti
                     
                 }
                 //include less.js to footer            
-                $GLOBALS['TSFE']->getPageRenderer()->addJsFooterFile($file = t3lib_extMgm::siteRelPath('t3_less') . 'Resources/Public/Js/less-1.3.0.min.js', $type = 'text/javascript', $compress = TRUE, $forceOnTop = FALSE);
+                $GLOBALS['TSFE']->getPageRenderer()->addJsFooterFile($file = $GLOBALS['TSFE']->tmpl->getFileName($this->configuration['other']['lessJsScriptPath']), $type = 'text/javascript', $compress = TRUE, $forceOnTop = FALSE);
             } else {
                 echo $this->wrapErrorMessage(Tx_Extbase_Utility_Localization::translate('noLessFilesInFolder', $this->extensionName, $arguments = array('s' => $this->lessfolder)));
             }

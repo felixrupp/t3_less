@@ -1,21 +1,21 @@
 <?php
 
-########################################################################
-# Extension Manager/Repository config file for ext "t3_less".
-#
-# Auto generated 25-08-2012 09:46
-#
-# Manual updates:
-# Only the data in the array - everything else is removed by next
-# writing. "version" and "dependencies" must not be touched!
-########################################################################
+/***************************************************************
+ * Extension Manager/Repository config file for ext "t3_less".
+ *
+ * Auto generated 16-02-2013 17:20
+ *
+ * Manual updates:
+ * Only the data in the array - everything else is removed by next
+ * writing. "version" and "dependencies" must not be touched!
+ ***************************************************************/
 
 $EM_CONF[$_EXTKEY] = array(
 	'title' => 'LESS for TYPO3',
 	'description' => 'An easy to use extbase extension for using LESScss in TYPO3. You can choose between leafo.net LESS-PHP-compiler or Javascript-based less.js-compiler. It is also possible to include compiled files and delete unused/old compiled files automaticaly.',
 	'category' => 'plugin',
 	'shy' => 0,
-	'version' => '0.5.2',
+	'version' => '1.0.0',
 	'dependencies' => '',
 	'conflicts' => '',
 	'priority' => '',
@@ -40,7 +40,9 @@ $EM_CONF[$_EXTKEY] = array(
 		'suggests' => array(
 		),
 	),
-	'_md5_values_when_last_written' => 'a:10:{s:12:"ext_icon.gif";s:4:"e922";s:17:"ext_localconf.php";s:4:"50e4";s:14:"ext_tables.php";s:4:"1ea5";s:37:"Classes/Controller/LessController.php";s:4:"a23b";s:38:"Configuration/TypoScript/constants.txt";s:4:"aa5e";s:34:"Configuration/TypoScript/setup.txt";s:4:"065b";s:40:"Resources/Private/Language/locallang.xml";s:4:"4ef5";s:35:"Resources/Private/Lib/lessc.inc.php";s:4:"db5a";s:37:"Resources/Public/Js/less-1.3.0.min.js";s:4:"ca73";s:14:"doc/manual.sxw";s:4:"cff5";}',
+	'_md5_values_when_last_written' => 'a:15:{s:12:"ext_icon.gif";s:4:"e922";s:17:"ext_localconf.php";s:4:"50e4";s:14:"ext_tables.php";s:4:"1ea5";s:37:"Classes/Controller/LessController.php";s:4:"47fe";s:48:"Classes/UserFunction/class.user_exampleClass.php";s:4:"fecb";s:38:"Configuration/TypoScript/constants.txt";s:4:"137a";s:34:"Configuration/TypoScript/setup.txt";s:4:"d8f8";s:40:"Resources/Private/Language/locallang.xml";s:4:"4ef5";s:35:"Resources/Private/Lib/lessc.inc.php";s:4:"2878";s:37:"Resources/Public/Js/less-1.3.0.min.js";s:4:"ca73";s:37:"Resources/Public/Js/less-1.3.1.min.js";s:4:"cef1";s:37:"Resources/Public/Js/less-1.3.2.min.js";s:4:"ae7d";s:37:"Resources/Public/Js/less-1.3.3.min.js";s:4:"3aa7";s:46:"Resources/Public/Js/less-1.4.0-alpha.min.js.js";s:4:"fbb1";s:14:"doc/manual.sxw";s:4:"3cad";}',
+	'suggests' => array(
+	),
 );
 
 ?>
