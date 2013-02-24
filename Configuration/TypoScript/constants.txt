@@ -1,9 +1,9 @@
 plugin.tx_t3less {
     files {
-        # cat=plugin.tx_t3less/file/1; type=string; label=Less-Files are stored in this folder (don't forget trailing slash)
+        # cat=plugin.tx_t3less/file/1; type=string; label=Less-Files are stored in this folder (You can use "EXT:" instead of typo3conf/ext/)
         pathToLessFiles = fileadmin/t3_less/lessfiles/
 
-        # cat=plugin.tx_t3less/file/2; type=string; label=CSS-Files should be stored in this path (don't forget trailing slash)
+        # cat=plugin.tx_t3less/file/2; type=string; label=CSS-Files should be stored in this path (You can use "EXT:" instead of typo3conf/ext/)
         outputFolder = fileadmin/t3_less/cssfiles/
     }
 
@@ -20,8 +20,8 @@ plugin.tx_t3less {
         # cat=plugin.tx_t3less//5; type=boolean; label =Force mode -- ALWAYS generate new file (not recommended for production) 
         forceMode = 0 
         
-        # cat=plugin.tx_t3less//6; type=input; label =Path to JS compiler script
-        lessJsScriptPath = EXT:t3_less/Resources/Public/Js/less-1.3.3.min.js
+        # cat=plugin.tx_t3less//6; type=options[less-1.3.3.min.js,less-1.3.2.min.js,less-1.3.1.min.js,less-1.4.0-alpha.min.js]; label =Path to JS compiler script
+        lessJsScriptPath = less-1.3.3.min.js
 
     }
 
