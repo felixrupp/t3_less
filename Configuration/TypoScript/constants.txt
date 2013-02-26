@@ -1,9 +1,9 @@
 plugin.tx_t3less {
     files {
-        # cat=plugin.tx_t3less/file/1; type=string; label=Less-Files are stored in this folder (You can use "EXT:" instead of typo3conf/ext/)
+        # cat=plugin.tx_t3less/file/1; type=string; label=Less-Files are stored in this folder (You can use EXT instead of typo3conf/ext/)
         pathToLessFiles = fileadmin/t3_less/lessfiles/
 
-        # cat=plugin.tx_t3less/file/2; type=string; label=CSS-Files should be stored in this path (You can use "EXT:" instead of typo3conf/ext/)
+        # cat=plugin.tx_t3less/file/2; type=string; label=CSS-Files should be stored in this path (You can use EXT instead of typo3conf/ext/)
         outputFolder = fileadmin/t3_less/cssfiles/
     }
 
