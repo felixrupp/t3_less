@@ -88,7 +88,7 @@ class Tx_T3Less_Controller_LessPhpController extends Tx_T3Less_Controller_BaseCo
         
         $files = t3lib_div::getFilesInDir($this->outputfolder, "css");
         //respect given sort order defined in TS 
-        usort($files, array($this, 'getSortOrderPhp'));
+        usort($files, array(self, 'getSortOrderPhp'));
 
         foreach ($files as $cssFile) {
             $excludeFromPageRender = $this->configuration['phpcompiler']['filesettings'][substr($cssFile, 0, -37)]['excludeFromPageRenderer'];

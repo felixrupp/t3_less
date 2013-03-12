@@ -39,7 +39,7 @@ class Tx_T3Less_Controller_LessJsController extends Tx_T3Less_Controller_BaseCon
      */
     public function lessJs($files) {
         //respect given sort order defined in TS 
-        usort($files, array($this, 'getSortOrderJs'));
+        usort($files, array(self, 'getSortOrderJs'));
         //files in defined lessfolder?
         if ($files) {
             foreach ($files as $lessFile) {
