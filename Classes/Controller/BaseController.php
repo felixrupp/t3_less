@@ -31,9 +31,8 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @author  David Greiner <hallo@davidgreiner.de>
  */
-
 class Tx_T3Less_Controller_BaseController extends Tx_Extbase_MVC_Controller_ActionController {
-    
+
     /**
      * configuration array from constants
      * @var array $configuration
@@ -129,13 +128,19 @@ class Tx_T3Less_Controller_BaseController extends Tx_Extbase_MVC_Controller_Acti
         $tsOptions2 = $fileSettings[substr($file2, 0, -37)];
         $sortOrder1 = $tsOptions1['sortOrder'] ? $tsOptions1['sortOrder'] : 0;
         $sortOrder2 = $tsOptions2['sortOrder'] ? $tsOptions2['sortOrder'] : 0;
+        $forceOnTop1 = $tsOptions1['forceOnTop'] ? $tsOptions1['forceOnTop'] : FALSE;
+        $forceOnTop2 = $tsOptions2['forceOnTop'] ? $tsOptions2['forceOnTop'] : FALSE;
+        $sortDirection = 1;
+        if($forceOnTop1 || $forceOnTop2) {
+            $sortDirection = -1;
+        }
 
         if ($sortOrder1 == $sortOrder2) {
             return 0;
         }
-        return ($sortOrder1 < $sortOrder2) ? -1 : 1;
+        return $sortDirection * (($sortOrder1 < $sortOrder2) ? -1 : 1);
     }
-    
+
     /**
      * getSortOrderJs
      * little helper function to respect given sort order defined in TS by using jscompiler
@@ -149,13 +154,19 @@ class Tx_T3Less_Controller_BaseController extends Tx_Extbase_MVC_Controller_Acti
         $tsOptions2 = $fileSettings[substr(array_pop(explode('/', $file2)), 0, -5)];
         $sortOrder1 = $tsOptions1['sortOrder'] ? $tsOptions1['sortOrder'] : 0;
         $sortOrder2 = $tsOptions2['sortOrder'] ? $tsOptions2['sortOrder'] : 0;
+        $forceOnTop1 = $tsOptions1['forceOnTop'] ? $tsOptions1['forceOnTop'] : FALSE;
+        $forceOnTop2 = $tsOptions2['forceOnTop'] ? $tsOptions2['forceOnTop'] : FALSE;
+        $sortDirection = 1;
+        if($forceOnTop1 || $forceOnTop2) {
+            $sortDirection = -1;
+        }
 
         if ($sortOrder1 == $sortOrder2) {
             return 0;
         }
-        return ($sortOrder1 < $sortOrder2) ? -1 : 1;
+        return $sortDirection * (($sortOrder1 < $sortOrder2) ? -1 : 1);
     }
-    
+
 }
 
 ?>
