@@ -19,8 +19,11 @@ plugin.tx_t3less {
         
         # cat=plugin.tx_t3less//5; type=boolean; label =Force mode -- ALWAYS generate new file (not recommended for production) 
         forceMode = 0 
+
+        # cat=plugin.tx_t3less//6; type=string; label=Import-Directories (comma separeted list of import directories)
+        importDirs = 
         
-        # cat=plugin.tx_t3less//6; type=options[less-1.3.3.min.js,less-1.3.2.min.js,less-1.3.1.min.js,less-1.4.0-alpha.min.js]; label =Path to JS compiler script
+        # cat=plugin.tx_t3less//7; type=options[less-1.3.3.min.js,less-1.3.2.min.js,less-1.3.1.min.js,less-1.4.0-alpha.min.js]; label =Path to JS compiler script
         lessJsScriptPath = less-1.3.3.min.js
 
     }

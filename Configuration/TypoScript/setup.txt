@@ -9,6 +9,7 @@ plugin.tx_t3less {
         unlinkCssFilesWithNoSourceFile = {$plugin.tx_t3less.other.unlinkCssFilesWithNoSourceFile}
         compressed = {$plugin.tx_t3less.other.compressed}
         forceMode = {$plugin.tx_t3less.other.forceMode}
+        importDirs = {$plugin.tx_t3less.other.importDirs}
         lessJsScriptPath = {$plugin.tx_t3less.other.lessJsScriptPath}
     }
     enable {

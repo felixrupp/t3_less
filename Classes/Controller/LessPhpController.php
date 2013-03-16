@@ -43,23 +43,13 @@ class Tx_T3Less_Controller_LessPhpController extends Tx_T3Less_Controller_BaseCo
     public function lessPhp($files) {
 
         // create outputfolder if it does not exist
-        if (!is_dir($this->outputfolder))
+        if (!is_dir($this->outputfolder)) {
             t3lib_div::mkdir_deep('', $this->outputfolder);
-        
-        // register custom functions, #36273
-        $less = new lessc();
-        if (is_array($this->configuration['phpcompiler']['registerFunctions'])) {
-            foreach ($this->configuration['phpcompiler']['registerFunctions'] as $key => $funcRef) {
-                $parts = explode('->', $funcRef);
-
-                if (count($parts) == 2) {
-                    $hookObject = t3lib_div::getUserObj($parts[0]);
-                    if (is_object($hookObject) && method_exists($hookObject, $parts[1])) {
-                        $less->registerFunction($key, array($hookObject, $parts[1]));
-                    }
-                }
-            }
         }
+
+        $less = t3lib_div::makeInstance('lessc');
+        self::checkForAdditionalConfiguration($less);
+
 
         // compile each less-file
         foreach ($files as $file) {
@@ -85,7 +75,7 @@ class Tx_T3Less_Controller_LessPhpController extends Tx_T3Less_Controller_BaseCo
         if ($this->configuration['other']['unlinkCssFilesWithNoSourceFile'] == 1) {
             self::unlinkGeneratedFilesWithNoSourceFile($files);
         }
-        
+
         $files = t3lib_div::getFilesInDir($this->outputfolder, "css");
         //respect given sort order defined in TS 
         usort($files, array($this, 'getSortOrderPhp'));
@@ -122,6 +112,31 @@ class Tx_T3Less_Controller_LessPhpController extends Tx_T3Less_Controller_BaseCo
             $md5 = substr(substr($cssFile, 0, -4), -32);
             if (!in_array($md5, $srcArr)) {
                 unlink($this->outputfolder . $cssFile);
+            }
+        }
+    }
+
+    public function checkForAdditionalConfiguration($less) {
+
+        /* Define directories for @import scripts */
+        if (isset($this->configuration['other']['importDirs'])) {
+            $importDirs = explode(',', str_replace(', ', ',', $this->configuration['other']['importDirs']));
+            foreach ($importDirs as $importDir) {
+                $less->addImportDir(Tx_T3Less_Utility_ResolvePath::getPath($importDir));
+            }
+        }
+        // register custom functions, #36273
+
+        if (is_array($this->configuration['phpcompiler']['registerFunctions'])) {
+            foreach ($this->configuration['phpcompiler']['registerFunctions'] as $key => $funcRef) {
+                $parts = explode('->', $funcRef);
+
+                if (count($parts) == 2) {
+                    $hookObject = t3lib_div::getUserObj($parts[0]);
+                    if (is_object($hookObject) && method_exists($hookObject, $parts[1])) {
+                        $less->registerFunction($key, array($hookObject, $parts[1]));
+                    }
+                }
             }
         }
     }
