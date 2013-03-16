@@ -39,7 +39,7 @@ class Tx_T3Less_Controller_LessJsController extends Tx_T3Less_Controller_BaseCon
      */
     public function lessJs($files) {
         //respect given sort order defined in TS 
-        usort($files, array(self, 'getSortOrderJs'));
+        usort($files, array($this, 'getSortOrderJs'));
         //files in defined lessfolder?
         if ($files) {
             foreach ($files as $lessFile) {
@@ -63,25 +63,7 @@ class Tx_T3Less_Controller_LessJsController extends Tx_T3Less_Controller_BaseCon
         }
     }
 
-    /**
-     * getSortOrderJs
-     * little helper function to respect given sort order defined in TS by using jscompiler
-     * @param type $file1
-     * @param type $file2
-     * @return int 
-     */
-    function getSortOrderJs($file1, $file2) {
-        $fileSettings = $this->configuration['jscompiler']['filesettings'];
-        $tsOptions1 = $fileSettings[substr(array_pop(explode('/', $file1)), 0, -5)];
-        $tsOptions2 = $fileSettings[substr(array_pop(explode('/', $file2)), 0, -5)];
-        $sortOrder1 = $tsOptions1['sortOrder'] ? $tsOptions1['sortOrder'] : 0;
-        $sortOrder2 = $tsOptions2['sortOrder'] ? $tsOptions2['sortOrder'] : 0;
-
-        if ($sortOrder1 == $sortOrder2) {
-            return 0;
-        }
-        return ($sortOrder1 < $sortOrder2) ? -1 : 1;
-    }
+    
 
 }
 

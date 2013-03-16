@@ -45,7 +45,8 @@ class Tx_T3Less_Controller_LessPhpController extends Tx_T3Less_Controller_BaseCo
         // create outputfolder if it does not exist
         if (!is_dir($this->outputfolder))
             t3lib_div::mkdir_deep('', $this->outputfolder);
-
+var_dump($this->configuration['phpcompiler']);
+        
         // register custom functions, #36273
         $less = new lessc();
         if (is_array($this->configuration['phpcompiler']['registerFunctions'])) {
@@ -88,7 +89,7 @@ class Tx_T3Less_Controller_LessPhpController extends Tx_T3Less_Controller_BaseCo
         
         $files = t3lib_div::getFilesInDir($this->outputfolder, "css");
         //respect given sort order defined in TS 
-        usort($files, array(self, 'getSortOrderPhp'));
+        usort($files, array($this, 'getSortOrderPhp'));
 
         foreach ($files as $cssFile) {
             $excludeFromPageRender = $this->configuration['phpcompiler']['filesettings'][substr($cssFile, 0, -37)]['excludeFromPageRenderer'];
@@ -111,6 +112,7 @@ class Tx_T3Less_Controller_LessPhpController extends Tx_T3Less_Controller_BaseCo
         // all available sourcefiles 
         //$sourceFiles = t3lib_div::getFilesInDir($this->lessfolder, "less");
         // build array with md5 values from sourcefiles
+        $srcArr = array();
         foreach ($sourceFiles as $file) {
             $srcArr[] .= md5_file($file);
         }
