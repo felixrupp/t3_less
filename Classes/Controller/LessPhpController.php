@@ -55,7 +55,10 @@ class Tx_T3Less_Controller_LessPhpController extends Tx_T3Less_Controller_BaseCo
         foreach ($files as $file) {
             //get only the name of less file
             $filename = array_pop(explode('/', $file));
-            $outputfile = $this->outputfolder . substr($filename, 0, -5) . '_' . md5_file(($file)) . '.css';
+            
+            $md5 = md5($filename . md5_file($file));
+            
+            $outputfile = $this->outputfolder . substr($filename, 0, -5) . '_' . $md5 . '.css';
 
             if ($this->configuration['other']['forceMode']) {
                 unlink($outputfile);
@@ -64,13 +67,14 @@ class Tx_T3Less_Controller_LessPhpController extends Tx_T3Less_Controller_BaseCo
             if (!file_exists($outputfile)) {
                 if ($this->configuration['other']['compressed']) {
                     $less->setFormatter("compressed");
-                    lessc::ccompile($file, $this->outputfolder . substr($filename, 0, -5) . '_' . md5_file(($file)) . '.css', $less);
+                    lessc::ccompile($file, $this->outputfolder . substr($filename, 0, -5) . '_' . $md5 . '.css', $less);
                 } else {
-                    lessc::ccompile($file, $this->outputfolder . substr($filename, 0, -5) . '_' . md5_file(($file)) . '.css');
+                    lessc::ccompile($file, $this->outputfolder . substr($filename, 0, -5) . '_' . $md5 . '.css');
                 }
                 t3lib_div::fixPermissions($outputfile, FALSE);
             }
         }
+        
         // unlink compiled files which have no equal source less-file
         if ($this->configuration['other']['unlinkCssFilesWithNoSourceFile'] == 1) {
             self::unlinkGeneratedFilesWithNoSourceFile($files);
@@ -98,19 +102,25 @@ class Tx_T3Less_Controller_LessPhpController extends Tx_T3Less_Controller_BaseCo
      * Only for mode "PHP-Compiler"
      */
     public function unlinkGeneratedFilesWithNoSourceFile($sourceFiles) {
+        
         // all available sourcefiles 
         //$sourceFiles = t3lib_div::getFilesInDir($this->lessfolder, "less");
         // build array with md5 values from sourcefiles
         $srcArr = array();
         foreach ($sourceFiles as $file) {
-            $srcArr[] .= md5_file($file);
+            
+            $filename = array_pop(explode('/', $file));
+            
+            $md5 = md5($filename . md5_file($file));
+            
+            $srcArr[] .= $md5;
         }
 
         // unlink every css file, which have no equal less-file
         // checked by comparing md5-string from filename with md5_file(sourcefile)
         foreach (t3lib_div::getFilesInDir($this->outputfolder, "css") as $cssFile) {
-            $md5 = substr(substr($cssFile, 0, -4), -32);
-            if (!in_array($md5, $srcArr)) {
+            $md5str = substr(substr($cssFile, 0, -4), -32);
+            if (!in_array($md5str, $srcArr)) {
                 unlink($this->outputfolder . $cssFile);
             }
         }
