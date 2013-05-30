@@ -1,5 +1,4 @@
 <?php
-
 /* * *************************************************************
  *  Copyright notice
  *
@@ -31,39 +30,69 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @author  David Greiner <hallo@davidgreiner.de>
  */
-class Tx_T3Less_Controller_LessJsController extends Tx_T3Less_Controller_BaseController {
+class Tx_T3Less_Controller_LessJsController extends Tx_T3Less_Controller_BaseController
+{
 
-    /**
-     * lessJs
-     * includes all less-files from defined lessfolder to head and less.js to the footer
-     */
-    public function lessJs($files) {
-        //respect given sort order defined in TS 
-        usort($files, array($this, 'getSortOrderJs'));
-        //files in defined lessfolder?
-        if ($files) {
-            foreach ($files as $lessFile) {
-                $filename = array_pop(explode('/', $lessFile));
+	/**
+	 * lessJs
+	 * includes all less-files from defined lessfolder to head and less.js to the footer
+	 */
+	public function lessJs( $files )
+	{
+		//respect given sort order defined in TS
+		usort( $files, array( $this, 'getSortOrderJs' ) );
+		//files in defined lessfolder?
+		if( $files )
+		{
+			foreach( $files as $lessFile )
+			{
+				$filename = array_pop( explode( '/', $lessFile ) );
 
-                $excludeFromPageRender = $this->configuration['jscompiler']['filesettings'][substr($filename, 0, -5)]['excludeFromPageRenderer'];
+				$excludeFromPageRenderer = $this->configuration['jscompiler']['filesettings'][substr( $filename, 0, -5 )]['excludeFromPageRenderer'];
 
-                if (!$excludeFromPageRender || $excludeFromPageRender == 0) {
-                    // array with filesettings from TS
-                    $tsOptions = $this->configuration['jscompiler']['filesettings'][substr($filename, 0, -5)];
+				if( !$excludeFromPageRenderer || $excludeFromPageRenderer == 0 )
+				{
+					// array with filesettings from TS
+					$tsOptions = $this->configuration['jscompiler']['filesettings'][substr( $filename, 0, -5 )];
 
-                    $GLOBALS['TSFE']->getPageRenderer()->addCssFile(
-                            $lessFile, $rel = 'stylesheet/less', $media = $tsOptions['media'] ? $tsOptions['media'] : 'all', $title = $tsOptions['title'] ? $tsOptions['title'] : '', $compress = FALSE, $forceOnTop = FALSE, $allWrap = $tsOptions['allWrap'] ? $tsOptions['allWrap'] : '', $excludeFromConcatenation = TRUE
-                    );
-                }
-            }
-            //include less.js to footer            
-            $GLOBALS['TSFE']->getPageRenderer()->addJsFooterFile($file = Tx_T3Less_Utility_ResolvePath::getPath('EXT:t3_less/Resources/Public/Js/' . $this->configuration['other']['lessJsScriptPath'], true), $type = 'text/javascript', $compress = TRUE, $forceOnTop = FALSE);
-        } else {
-            echo Tx_T3Less_Utility_ErrorMessage::wrapErrorMessage(Tx_Extbase_Utility_Localization::translate('noLessFilesInFolder', $this->extensionName, $arguments = array('s' => $this->lessfolder)));
-        }
-    }
+					$GLOBALS['TSFE']->getPageRenderer()->addCssFile(
+						$lessFile, $rel = 'stylesheet/less', $media = $tsOptions['media'] ? $tsOptions['media'] : 'all', $title = $tsOptions['title'] ? $tsOptions['title'] : '', $compress = FALSE, $forceOnTop = FALSE, $allWrap = $tsOptions['allWrap'] ? $tsOptions['allWrap'] : '', $excludeFromConcatenation = TRUE
+					);
+				}
+			}
+			//include less.js to footer
+			$GLOBALS['TSFE']->getPageRenderer()->addJsFooterFile( $file = Tx_T3Less_Utility_Utilities::getPath( 'EXT:t3_less/Resources/Public/Js/' . $this->configuration['other']['lessJsScriptPath'], true ), $type = 'text/javascript', $compress = TRUE, $forceOnTop = FALSE );
+		}
+	}
 
-    
+	/**
+	 * getSortOrderJs
+	 * little helper function to respect given sort order defined in TS by using jscompiler
+	 * @param type $file1
+	 * @param type $file2
+	 * @return int
+	 */
+	protected function getSortOrderJs( $file1, $file2 )
+	{
+		$fileSettings = $this->configuration['jscompiler']['filesettings'];
+		$tsOptions1 = $fileSettings[substr( array_pop( explode( '/', $file1 ) ), 0, -5 )];
+		$tsOptions2 = $fileSettings[substr( array_pop( explode( '/', $file2 ) ), 0, -5 )];
+		$sortOrder1 = $tsOptions1['sortOrder'] ? $tsOptions1['sortOrder'] : 0;
+		$sortOrder2 = $tsOptions2['sortOrder'] ? $tsOptions2['sortOrder'] : 0;
+		$forceOnTop1 = $tsOptions1['forceOnTop'] ? $tsOptions1['forceOnTop'] : FALSE;
+		$forceOnTop2 = $tsOptions2['forceOnTop'] ? $tsOptions2['forceOnTop'] : FALSE;
+		$sortDirection = 1;
+		if( $forceOnTop1 || $forceOnTop2 )
+		{
+			$sortDirection = -1;
+		}
+
+		if( $sortOrder1 == $sortOrder2 )
+		{
+			return 0;
+		}
+		return $sortDirection * (($sortOrder1 < $sortOrder2) ? -1 : 1);
+	}
 
 }
 
