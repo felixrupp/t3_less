@@ -5,10 +5,9 @@
 $extensionClassesPath = t3lib_extMgm::extPath('t3_less') . 'Classes/';
 return array(
 	'tx_t3less_controller_basecontroller' => $extensionClassesPath . 'Controller/BaseController.php',
-        'tx_t3less_controller_lessphpcontroller' => $extensionClassesPath . 'Controller/LessPhpController.php',
+    'tx_t3less_controller_lessphpcontroller' => $extensionClassesPath . 'Controller/LessPhpController.php',
 	'tx_t3less_controller_lessjscontroller' => $extensionClassesPath . 'Controller/LessJsController.php',
-	'tx_t3less_utility_errormessage' => $extensionClassesPath . 'Utility/ErrorMessage.php',
-	'tx_t3less_utility_flatarray' => $extensionClassesPath . 'Utility/FlatArray.php',
-	'tx_t3less_utility_resolvepath' => $extensionClassesPath . 'Utility/ResolvePath.php',
+	'tx_t3less_controller_lessjsnodecontroller' => $extensionClassesPath . 'Controller/LessJsNodeController.php',
+	'tx_t3less_utility_utilities' => $extensionClassesPath . 'Utility/Utilities.php',
 );
 ?>

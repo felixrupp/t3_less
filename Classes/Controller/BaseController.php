@@ -29,6 +29,7 @@
  * @subpackage t3_less
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @author  David Greiner <hallo@davidgreiner.de>
+ * @author  Thomas Heuer <technik@thomas-heuer.de>
  */
 class Tx_T3Less_Controller_BaseController extends Tx_Extbase_MVC_Controller_ActionController
 {
@@ -122,9 +123,19 @@ class Tx_T3Less_Controller_BaseController extends Tx_Extbase_MVC_Controller_Acti
 				$controller = t3lib_div::makeInstance( 'Tx_T3Less_Controller_LessJsController' );
 				$controller->lessJs( $files );
 				break;
+
+			case 'JS-Compiler via Node.js':
+				$controller = t3lib_div::makeInstance( 'Tx_T3Less_Controller_LessJsNodeController' );
+				if( $controller->isLesscInstalled() )
+				{
+					$controller->lessc( $files );
+				}
+				else
+				{
+					echo Tx_T3Less_Utility_Utilities::wrapErrorMessage( Tx_Extbase_Utility_Localization::translate( 'lesscRequired', $this->extensionName ) );
+				}
+				break;
 		}
 	}
 
 }
-
-?>
