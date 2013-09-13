@@ -1,56 +1,42 @@
 <?php
-/* * *************************************************************
- *  Copyright notice
- *
- *  (c) 2013 David Greiner <hallo@davidgreiner.de>
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- * ************************************************************* */
 
 /**
- *
+ * A compiler using the original less.js via Node.js (if it is installed)
  *
  * @package TYPO3
  * @subpackage t3_less
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- * @author  David Greiner <hallo@davidgreiner.de>
+ * @author  Thomas Heuer <technik@thomas-heuer.de>
  */
-class Tx_T3Less_Controller_LessPhpController extends Tx_T3Less_Controller_BaseController
+class Tx_T3Less_Controller_LessJsNodeController extends Tx_T3Less_Controller_BaseController
 {
 
+	public function isLesscInstalled()
+	{
+		exec( 'lessc', $output, $returnValue );
+		if( $returnValue == 127 )
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+
 	/**
-	 * lessPhp
+	 * lessc
 	 *
 	 * @return void
 	 */
-	public function lessPhp( $files )
+	public function lessc( $files )
 	{
-		require_once (t3lib_extMgm::extPath( 't3_less' ) . 'Resources/Private/Lib/' . $this->configuration['other']['lessPhpScriptPath']);
 
 		// create outputfolder if it does not exist
 		if( !is_dir( $this->outputfolder ) )
 		{
 			t3lib_div::mkdir_deep( '', $this->outputfolder );
 		}
-
-		$less = t3lib_div::makeInstance( 'lessc' );
-		$this->checkForAdditionalConfiguration( $less );
-
 
 		// compile each less-file
 		foreach( $files as $file )
@@ -62,22 +48,27 @@ class Tx_T3Less_Controller_LessPhpController extends Tx_T3Less_Controller_BaseCo
 
 			$outputfile = $this->outputfolder . substr( $filename, 0, -5 ) . '_' . $md5 . '.css';
 
-			if( $this->configuration['other']['forceMode'] )
+			if( $this->configuration['other']['forceMode'] && file_exists( $outputfile ) )
 			{
 				unlink( $outputfile );
 			}
 
 			if( !file_exists( $outputfile ) )
 			{
-				if( $this->configuration['other']['compressed'] )
+				$compressed = $this->configuration['other']['compressed'] ? '--compress' : '';
+
+				/* Define directories for @import scripts */
+				$importDirs = '';
+				if( isset( $this->configuration['other']['importDirs'] ) )
 				{
-					$less->setFormatter( "compressed" );
-					lessc::ccompile( $file, $this->outputfolder . substr( $filename, 0, -5 ) . '_' . $md5 . '.css', $less );
+					$importDirs = implode( ':', Tx_T3Less_Utility_Utilities::splitAndResolveDirNames( $this->configuration['other']['importDirs'] ) );
 				}
-				else
-				{
-					lessc::ccompile( $file, $this->outputfolder . substr( $filename, 0, -5 ) . '_' . $md5 . '.css' );
-				}
+
+				$lesscCommand = sprintf( 'lessc %s --line-numbers=\'comments\' --include-path=%s %s > %s 2>&1', $compressed, $importDirs, $file, $outputfile );
+				$lesscOutput = array( );
+				$lesscStatus = 0;
+				exec( $lesscCommand, $lesscOutput, $lesscStatus );
+
 				t3lib_div::fixPermissions( $outputfile, FALSE );
 			}
 		}
@@ -140,37 +131,6 @@ class Tx_T3Less_Controller_LessPhpController extends Tx_T3Less_Controller_BaseCo
 		}
 	}
 
-	function checkForAdditionalConfiguration( $less )
-	{
-		/* Define directories for @import scripts */
-		if( isset( $this->configuration['other']['importDirs'] ) )
-		{
-			$importDirs = explode( ',', str_replace( ', ', ',', $this->configuration['other']['importDirs'] ) );
-			foreach( $importDirs as $importDir )
-			{
-				$less->addImportDir( Tx_T3Less_Utility_Utilities::getPath( $importDir ) );
-			}
-		}
-		// register custom functions, #36273
-
-		if( is_array( $this->configuration['phpcompiler']['registerFunctions'] ) )
-		{
-			foreach( $this->configuration['phpcompiler']['registerFunctions'] as $key => $funcRef )
-			{
-				$parts = explode( '->', $funcRef );
-
-				if( count( $parts ) == 2 )
-				{
-					$hookObject = t3lib_div::getUserObj( $parts[0] );
-					if( is_object( $hookObject ) && method_exists( $hookObject, $parts[1] ) )
-					{
-						$less->registerFunction( $key, array( $hookObject, $parts[1] ) );
-					}
-				}
-			}
-		}
-	}
-
 	/**
 	 * getSortOrderPhp
 	 * little helper function to respect given sort order defined in TS by using phpcompiler
@@ -201,5 +161,3 @@ class Tx_T3Less_Controller_LessPhpController extends Tx_T3Less_Controller_BaseCo
 	}
 
 }
-
-?>

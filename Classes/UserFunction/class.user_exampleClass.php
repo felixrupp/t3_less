@@ -1,5 +1,4 @@
 <?php
-
 /* * *************************************************************
  *  Copyright notice
  *
@@ -31,24 +30,26 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @author  David Greiner <hallo@davidgreiner.de>
  */
-/**
- * Example function to register custom function  
- * http://leafo.net/lessphp/docs/#custom_functions 
- * 
- * Does anyone know why the original example with "return array ($ type, $ value * 2)" does not work? 
- * This function works only if a var_dump or echo is executed. very strange... 
- * Please give me a hint on hallo@davidgreiner.de
- * 
- */
-class user_exampleClass {
 
-    public function exampleFunction($arg) {
-        
-        list($type, $value, $dimension) = $arg;
-        //spooky workaround
-        return $value * 2 . $dimension;
-        
-    }
+/**
+ * Example function to register custom function
+ * http://leafo.net/lessphp/docs/#custom_functions
+ *
+ * Does anyone know why the original example with "return array ($ type, $ value * 2)" does not work?
+ * This function works only if a var_dump or echo is executed. very strange...
+ * Please give me a hint on hallo@davidgreiner.de
+ *
+ */
+class user_exampleClass
+{
+
+	public function exampleFunction( $arg )
+	{
+
+		list($type, $value, $dimension) = $arg;
+		//spooky workaround
+		return $value * 2 . $dimension;
+	}
 
 }
 

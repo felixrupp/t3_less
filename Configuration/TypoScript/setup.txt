@@ -4,19 +4,21 @@ plugin.tx_t3less {
         outputFolder = {$plugin.tx_t3less.files.outputFolder}
     }
     other {
-        
+
         activateCompiler = {$plugin.tx_t3less.other.activateCompiler}
         unlinkCssFilesWithNoSourceFile = {$plugin.tx_t3less.other.unlinkCssFilesWithNoSourceFile}
         compressed = {$plugin.tx_t3less.other.compressed}
         forceMode = {$plugin.tx_t3less.other.forceMode}
         importDirs = {$plugin.tx_t3less.other.importDirs}
         lessJsScriptPath = {$plugin.tx_t3less.other.lessJsScriptPath}
+		lessPhpScriptPath = {$plugin.tx_t3less.other.lessPhpScriptPath}
+
     }
     enable {
         mode = {$plugin.tx_t3less.enable.mode}
     }
 
-    
+
 }
 
 
@@ -83,11 +85,11 @@ plugin.tx_t3less {
 ###
 ### JS-Compiler has only three settings to configure, all other makes no sense by using less.js
 ### the other settings are by default: compress & excludeFromConcatenation = FALSE, forceOnTop = TRUE
-### For media queries you should use something like this in your less-file, 
+### For media queries you should use something like this in your less-file,
 ### but you can also use plugin.tx_t3less.jscompiler.filesettings.LESS-FILENAME_WITHOUT_EXTENSION.media
 /*
 @media screen and (max-width: 480px) {
-    #header {        
+    #header {
         display:none;
     }
 }
