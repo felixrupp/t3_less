@@ -1,5 +1,5 @@
 <?php
-
+namespace DG\T3Less\Controller;
 /**
  * A compiler using the original less.js via Node.js (if it is installed)
  *
@@ -8,7 +8,7 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @author  Thomas Heuer <technik@thomas-heuer.de>
  */
-class Tx_T3Less_Controller_LessJsNodeController extends Tx_T3Less_Controller_BaseController
+class LessJsNodeController extends BaseController
 {
 
 	public function isLesscInstalled()
@@ -35,7 +35,7 @@ class Tx_T3Less_Controller_LessJsNodeController extends Tx_T3Less_Controller_Bas
 		// create outputfolder if it does not exist
 		if( !is_dir( $this->outputfolder ) )
 		{
-			t3lib_div::mkdir_deep( '', $this->outputfolder );
+			\TYPO3\CMS\Core\Utility\GeneralUtility::mkdir_deep( '', $this->outputfolder );
 		}
 
 		// compile each less-file
@@ -61,15 +61,15 @@ class Tx_T3Less_Controller_LessJsNodeController extends Tx_T3Less_Controller_Bas
 				$importDirs = '';
 				if( isset( $this->configuration['other']['importDirs'] ) )
 				{
-					$importDirs = implode( ':', Tx_T3Less_Utility_Utilities::splitAndResolveDirNames( $this->configuration['other']['importDirs'] ) );
+					$importDirs = implode( ':', \DG\T3Less\Utility\Utilities::splitAndResolveDirNames( $this->configuration['other']['importDirs'] ) );
 				}
 
 				$lesscCommand = sprintf( 'lessc %s --line-numbers=\'comments\' --include-path=%s %s > %s 2>&1', $compressed, $importDirs, $file, $outputfile );
-				$lesscOutput = array( );
+				$lesscOutput = array();
 				$lesscStatus = 0;
 				exec( $lesscCommand, $lesscOutput, $lesscStatus );
 
-				t3lib_div::fixPermissions( $outputfile, FALSE );
+				\TYPO3\CMS\Core\Utility\GeneralUtility::fixPermissions( $outputfile, FALSE );
 			}
 		}
 
@@ -79,7 +79,7 @@ class Tx_T3Less_Controller_LessJsNodeController extends Tx_T3Less_Controller_Bas
 			$this->unlinkGeneratedFilesWithNoSourceFile( $files );
 		}
 
-		$files = t3lib_div::getFilesInDir( $this->outputfolder, "css" );
+		$files = \TYPO3\CMS\Core\Utility\GeneralUtility::getFilesInDir( $this->outputfolder, "css" );
 		//respect given sort order defined in TS
 		usort( $files, array( $this, 'getSortOrderPhp' ) );
 
@@ -121,7 +121,7 @@ class Tx_T3Less_Controller_LessJsNodeController extends Tx_T3Less_Controller_Bas
 
 		// unlink every css file, which have no equal less-file
 		// checked by comparing md5-string from filename with md5_file(sourcefile)
-		foreach( t3lib_div::getFilesInDir( $this->outputfolder, "css" ) as $cssFile )
+		foreach( \TYPO3\CMS\Core\Utility\GeneralUtility::getFilesInDir( $this->outputfolder, "css" ) as $cssFile )
 		{
 			$md5str = substr( substr( $cssFile, 0, -4 ), -32 );
 			if( !in_array( $md5str, $srcArr ) )

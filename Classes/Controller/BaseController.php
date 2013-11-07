@@ -1,4 +1,5 @@
 <?php
+namespace DG\T3Less\Controller;
 /* * *************************************************************
  *  Copyright notice
  *
@@ -31,7 +32,7 @@
  * @author  David Greiner <hallo@davidgreiner.de>
  * @author  Thomas Heuer <technik@thomas-heuer.de>
  */
-class Tx_T3Less_Controller_BaseController extends Tx_Extbase_MVC_Controller_ActionController
+class BaseController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 {
 	/**
 	 * configuration array from constants
@@ -54,15 +55,18 @@ class Tx_T3Less_Controller_BaseController extends Tx_Extbase_MVC_Controller_Acti
 	public function __construct()
 	{
 		//makeInstance should not be used, but injection does not work without FE-plugin?
-		$objectManager = t3lib_div::makeInstance( 'Tx_Extbase_Object_ObjectManager' );
-		$configurationManager = $objectManager->get( 'Tx_Extbase_Configuration_ConfigurationManagerInterface' );
+
+		$objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance( 'TYPO3\\CMS\\Extbase\\Object\\ObjectManager' );
+
+		$configurationManager = $objectManager->get( 'TYPO3\\CMS\\Extbase\\Configuration\\ConfigurationManagerInterface' );
 
 		$configuration = $configurationManager->getConfiguration(
-			Tx_Extbase_Configuration_ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK, 'T3Less', ''
+			\TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK, 'T3Less', ''
 		);
 		$this->configuration = $configuration;
-		$this->lessfolder = Tx_T3Less_Utility_Utilities::getPath( $this->configuration['files']['pathToLessFiles'] );
-		$this->outputfolder = Tx_T3Less_Utility_Utilities::getPath( $this->configuration['files']['outputFolder'] );
+
+		$this->lessfolder = \DG\T3Less\Utility\Utilities::getPath( $this->configuration['files']['pathToLessFiles'] );
+		$this->outputfolder = \DG\T3Less\Utility\Utilities::getPath( $this->configuration['files']['outputFolder'] );
 		parent::__construct();
 	}
 
@@ -85,18 +89,19 @@ class Tx_T3Less_Controller_BaseController extends Tx_Extbase_MVC_Controller_Acti
 			if( $this->lessfolder && $this->outputfolder )
 			{
 				// are there files in the defined less folder?
-				if( t3lib_div::getFilesInDir( $this->lessfolder, "less", TRUE ) )
+				if( \TYPO3\CMS\Core\Utility\GeneralUtility::getFilesInDir( $this->lessfolder, "less", TRUE ) )
 				{
-					$files = t3lib_div::getFilesInDir( $this->lessfolder, "less", TRUE );
+					$files = \TYPO3\CMS\Core\Utility\GeneralUtility::getFilesInDir( $this->lessfolder, "less", TRUE );
+
 				}
 				else
 				{
-					echo Tx_T3Less_Utility_Utilities::wrapErrorMessage( Tx_Extbase_Utility_Localization::translate( 'noLessFilesInFolder', $this->extensionName, $arguments = array( 's' => $this->lessfolder ) ) );
+					echo \DG\T3Less\Utility\Utilities::wrapErrorMessage( \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate( 'noLessFilesInFolder', $this->extensionName, $arguments = array( 's' => $this->lessfolder ) ) );
 				}
 			}
 			else
 			{
-				echo Tx_T3Less_Utility_Utilities::wrapErrorMessage( Tx_Extbase_Utility_Localization::translate( 'emptyPathes', $this->extensionName ) );
+				echo \DG\T3Less\Utility\Utilities::wrapErrorMessage( \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate( 'emptyPathes', $this->extensionName ) );
 			}
 		}
 
@@ -106,33 +111,33 @@ class Tx_T3Less_Controller_BaseController extends Tx_Extbase_MVC_Controller_Acti
 		{
 			foreach( $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['t3less']['addForeignLessFiles'] as $hookedFilePath )
 			{
-				$hookPath = Tx_T3Less_Utility_Utilities::getPath( $hookedFilePath );
-				$files[] = t3lib_div::getFilesInDir( $hookPath, "less", TRUE );
+				$hookPath = \DG\T3Less\Utility\Utilities::getPath( $hookedFilePath );
+				$files[] = \TYPO3\CMS\Core\Utility\GeneralUtility::getFilesInDir( $hookPath, "less", TRUE );
 			}
-			$files = Tx_T3Less_Utility_Utilities::flatArray( null, $files );
+			$files = \DG\T3Less\Utility\Utilities::flatArray( null, $files );
 		}
 
 		switch( $this->configuration['enable']['mode'] )
 		{
 			case 'PHP-Compiler':
-				$controller = t3lib_div::makeInstance( 'Tx_T3Less_Controller_LessPhpController' );
+				$controller = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance( 'DG\\T3Less\\Controller\\LessPhpController' );
 				$controller->lessPhp( $files );
 				break;
 
 			case 'JS-Compiler':
-				$controller = t3lib_div::makeInstance( 'Tx_T3Less_Controller_LessJsController' );
+				$controller = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance( 'DG\\T3Less\\Controller\\LessJsController' );
 				$controller->lessJs( $files );
 				break;
 
 			case 'JS-Compiler via Node.js':
-				$controller = t3lib_div::makeInstance( 'Tx_T3Less_Controller_LessJsNodeController' );
+				$controller = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance( 'DG\\T3Less\\Controller\\LessJsNodeController' );
 				if( $controller->isLesscInstalled() )
 				{
 					$controller->lessc( $files );
 				}
 				else
 				{
-					echo Tx_T3Less_Utility_Utilities::wrapErrorMessage( Tx_Extbase_Utility_Localization::translate( 'lesscRequired', $this->extensionName ) );
+					echo \DG\T3Less\Utility\Utilities::wrapErrorMessage( \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate( 'lesscRequired', $this->extensionName ) );
 				}
 				break;
 		}

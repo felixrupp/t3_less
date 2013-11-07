@@ -1,4 +1,5 @@
 <?php
+
 /* * *************************************************************
  *  Copyright notice
  *
@@ -30,7 +31,6 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @author  David Greiner <hallo@davidgreiner.de>
  */
-
 /**
  * Example function to register custom function
  * http://leafo.net/lessphp/docs/#custom_functions
@@ -40,16 +40,15 @@
  * Please give me a hint on hallo@davidgreiner.de
  *
  */
-class user_exampleClass
-{
+class user_exampleClass {
 
-	public function exampleFunction( $arg )
-	{
+    public function exampleFunction($arg) {
 
-		list($type, $value, $dimension) = $arg;
-		//spooky workaround
-		return $value * 2 . $dimension;
-	}
+        list($type, $value, $dimension) = $arg;
+        //spooky workaround
+        return $value * 2 . $dimension;
+
+    }
 
 }
 

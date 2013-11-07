@@ -1,4 +1,5 @@
 <?php
+namespace DG\T3Less\Controller;
 /* * *************************************************************
  *  Copyright notice
  *
@@ -30,7 +31,7 @@
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @author  David Greiner <hallo@davidgreiner.de>
  */
-class Tx_T3Less_Controller_LessJsController extends Tx_T3Less_Controller_BaseController
+class LessJsController extends BaseController
 {
 
 	/**
@@ -61,7 +62,7 @@ class Tx_T3Less_Controller_LessJsController extends Tx_T3Less_Controller_BaseCon
 				}
 			}
 			//include less.js to footer
-			$GLOBALS['TSFE']->getPageRenderer()->addJsFooterFile( $file = Tx_T3Less_Utility_Utilities::getPath( 'EXT:t3_less/Resources/Public/Js/' . $this->configuration['other']['lessJsScriptPath'], true ), $type = 'text/javascript', $compress = TRUE, $forceOnTop = FALSE );
+			$GLOBALS['TSFE']->getPageRenderer()->addJsFooterFile( $file = \DG\T3Less\Utility\Utilities::getPath( 'EXT:t3_less/Resources/Public/Js/' . $this->configuration['other']['lessJsScriptPath'], true ), $type = 'text/javascript', $compress = TRUE, $forceOnTop = FALSE );
 		}
 	}
 
