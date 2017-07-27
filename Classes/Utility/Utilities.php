@@ -39,7 +39,7 @@ class Utilities
      * @return array $elements
      */
     public static function flatArray($needle = null, $haystack = array()) {
-        $iterator = new RecursiveIteratorIterator(new RecursiveArrayIterator($haystack));
+        $iterator = new \RecursiveIteratorIterator(new \RecursiveArrayIterator($haystack));
         $elements = array();
 
         foreach ($iterator as $element) {
